@@ -36,6 +36,7 @@
 </head>
 
 <body>
+<h3 class="masthead-brand"><a href="<c:url value="/home"/>">Ali-X Spring project</a></h3>
 <div class="container">
 <h1>Product Settings</h1>
 <br>

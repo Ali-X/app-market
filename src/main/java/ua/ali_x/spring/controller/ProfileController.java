@@ -2,22 +2,23 @@ package ua.ali_x.spring.controller;
 
 import org.apache.commons.io.IOUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.View;
-import ua.ali_x.spring.model.Roles;
 import ua.ali_x.spring.model.User;
 import ua.ali_x.spring.service.OrderService;
 import ua.ali_x.spring.service.UserService;
 
-import javax.servlet.ServletOutputStream;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
@@ -28,6 +29,11 @@ public class ProfileController {
     private UserService userService;
     @Autowired
     private OrderService orderService;
+
+    @Value("${user.role.default}")
+    private String userRoleDefault;
+    @Value("${user.role.admin}")
+    private String userRoleAdmin;
 
     @ResponseBody
     @RequestMapping(value = "/image", method = RequestMethod.GET, produces = MediaType.IMAGE_PNG_VALUE)
@@ -40,31 +46,41 @@ public class ProfileController {
         return IOUtils.toByteArray(fin);
     }
 
-    @RequestMapping(value = "/profile", method = RequestMethod.GET)
-    public ModelAndView checkUser(@CookieValue(value = "token", defaultValue = "token") String token){
-        ModelAndView mv;
-        User userInput = userService.findByToken(token);
-        if (userInput != null) {
-            if (userInput.getRoles().contains(Roles.ADMIN)) {
-                mv = new ModelAndView("admin", "user", userInput);
-            } else {
-                mv = new ModelAndView("profile", "user", userInput);
-            }
-        } else {
-            mv = new ModelAndView("login", "user", new User());
-            System.out.println("No user token in cookies");
+    @RequestMapping(value = "/personalPage", method = RequestMethod.GET)
+    public void checkUser(HttpServletRequest request, HttpServletResponse response) {
+        response.setStatus(HttpServletResponse.SC_TEMPORARY_REDIRECT);
+        if (request.isUserInRole(userRoleAdmin)) {
+            response.setHeader("Location", "/admin");
+            return;
         }
+        if (request.isUserInRole(userRoleDefault)) {
+            response.setHeader("Location", "/profile");
+            return;
+        }
+        response.setHeader("Location", "/login");
+    }
+
+    @RequestMapping(value = "/admin", method = RequestMethod.GET)
+    public ModelAndView getAdmin(HttpServletRequest request) {
+        ModelAndView mv;
+        mv = new ModelAndView("admin", "user", userService.getByUserName(request.getRemoteUser()));
+        return mv;
+    }
+
+
+    @RequestMapping(value = "/profile", method = RequestMethod.GET)
+    public ModelAndView getProfile(HttpServletRequest request) {
+        ModelAndView mv;
+        mv = new ModelAndView("profile", "user", userService.getByUserName(request.getRemoteUser()));
         return mv;
     }
 
     @RequestMapping(value = "/profile/orders", method = RequestMethod.GET)
-    public ModelAndView getOrders(@CookieValue(value = "token", defaultValue = "token") String token){
+    public ModelAndView getOrders(HttpServletRequest request) {
         ModelAndView mv;
-        User userInput = userService.findByToken(token);
-        if (userInput != null) {
-            mv = new ModelAndView("orders", "orders", orderService.getAll(userInput.getId()));
-            mv.addObject("user", userInput);
-        } else mv = new ModelAndView("home");
+        User user = userService.getByUserName(request.getRemoteUser());
+        mv = new ModelAndView("orders", "orders", orderService.getAll(user));
+        mv.addObject("user", user);
         return mv;
     }
 

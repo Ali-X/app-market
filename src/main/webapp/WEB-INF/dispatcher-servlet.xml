@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
-       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:mvc="http://www.springframework.org/schema/mvc"
        xmlns:context="http://www.springframework.org/schema/context"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:security="http://www.springframework.org/schema/security"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+                           http://www.springframework.org/schema/beans/spring-beans.xsd
+                           http://www.springframework.org/schema/mvc
+                           http://www.springframework.org/schema/mvc/spring-mvc.xsd
+                           http://www.springframework.org/schema/context
+                           http://www.springframework.org/schema/context/spring-context.xsd
+                           http://www.springframework.org/schema/tx
+                           http://www.springframework.org/schema/tx/spring-tx.xsd
+                           http://www.springframework.org/schema/security
+                          http://www.springframework.org/schema/security/spring-security.xsd">
 
     <bean id="viewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">
         <property name="prefix" value="/WEB-INF/views/"/>
@@ -13,7 +23,7 @@
     <bean id="dispatcherServlet" class="org.springframework.web.servlet.DispatcherServlet"/>
 
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
-        <property name="driverClassName" value="org.h2.Driver"/>
+        <property name="driverClassName" value="${db.driver}"/>
         <property name="url" value="jdbc:h2:tcp://localhost/~/test"/>
         <property name="username" value="sa"/>
         <property name="password" value=""/>
@@ -24,13 +34,71 @@
         <constructor-arg ref="dataSource"/>
     </bean>
 
+    <bean id="sessionFactory" class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="hibernateProperties">
+            <props>
+                <prop key="hibernate.dialect">org.hibernate.dialect.H2Dialect</prop>
+                <prop key="hibernate.hbm2ddl.auto">validate</prop>
+                <prop key="hibernate.show_sql">true</prop>
+                <prop key="hibernate.format_sql">true</prop>
+            </props>
+        </property>
+        <property name="packagesToScan" value="ua.ali_x.spring.*"/>
+    </bean>
+
     <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
         <property name="maxUploadSize" value="400000"/>
     </bean>
+
+    <bean id="transactionManager" class="org.springframework.orm.hibernate4.HibernateTransactionManager">
+        <property name="sessionFactory" ref="sessionFactory"/>
+    </bean>
+
+    <security:http auto-config="true" access-denied-page="/auth/denied" use-expressions="true">
+        <security:intercept-url pattern="/admin**" access="hasRole('ADMIN')"/>
+        <security:intercept-url pattern="/profile**" access="hasRole('USER')"/>
+
+        <security:form-login
+                login-page="/login"
+                authentication-failure-url="/login?error"
+                default-target-url="/personalPage"
+                username-parameter="username"
+                password-parameter="password"
+                login-processing-url="/j_spring_security_check"
+        />
+        <security:logout
+                logout-url="/j_spring_security_logout"
+                logout-success-url="/login?logout"
+                invalidate-session="true"/>
+        <security:csrf/>
+    </security:http>
+
+    <security:authentication-manager>
+        <security:authentication-provider>
+            <security:jdbc-user-service data-source-ref="dataSource"
+                                        users-by-username-query="SELECT username, password, enabled FROM users WHERE username = ?"
+                                        authorities-by-username-query="SELECT u.username, r.name FROM users u
+                                                                           join usertorole utr on u.id = utr.userid
+                                                                           join roles r on r.id = utr.roleid
+                                                                           WHERE username = ?"
+            />
+<!--            <security:password-encoder hash="md5">
+                <security:salt-source system-wide="cewuiqwzie"/>
+            </security:password-encoder>-->
+        </security:authentication-provider>
+    </security:authentication-manager>
+
+    <bean id="defaultWebSecurityExpressionHandler"
+          class="org.springframework.security.web.access.expression.DefaultWebSecurityExpressionHandler"/>
 
     <mvc:annotation-driven/>
 
     <mvc:resources mapping="/resources/**" location="/resources/"/>
 
     <context:component-scan base-package="ua.ali_x.spring"/>
+
+    <tx:annotation-driven/>
+
+    <context:property-placeholder location="classpath:application.properties"/>
 </beans>

@@ -14,9 +14,9 @@ public interface ProductDAO {
 
     Product getProduct(Integer c_id, Integer p_id);
 
-    void create(String name, String description, Integer c_id, BigDecimal price);
+    void create(Product product);
 
-    void delete(Integer id);
+    void delete(Product product);
 
-    void update(Integer id, String new_name, String new_descr, BigDecimal new_price, String c_name);
+    void update(Product product);
 }

@@ -4,12 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.ModelAndView;
+import ua.ali_x.spring.model.Category;
 import ua.ali_x.spring.model.Product;
 import ua.ali_x.spring.model.User;
 import ua.ali_x.spring.service.CategoryService;
 import ua.ali_x.spring.service.OrderService;
 import ua.ali_x.spring.service.ProductService;
 import ua.ali_x.spring.service.UserService;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Controller
 public class ProductController {
@@ -31,7 +34,10 @@ public class ProductController {
 
     @RequestMapping(value = "/admin/product/add", method = RequestMethod.POST)
     public ModelAndView addProduct(@ModelAttribute("product") Product product, @RequestParam("c_id") Integer id) {
-        productService.create(product.getName(), product.getDescription(), id, product.getPrice());
+        Category category = new Category();
+        category.setId(id);
+        product.setCategory(category);
+        productService.create(product);
         return new ModelAndView("success");
     }
 
@@ -45,24 +51,30 @@ public class ProductController {
 
     @RequestMapping(value = "/admin/product/upd", method = RequestMethod.POST)
     public ModelAndView updateProduct(@ModelAttribute("product") Product product, @RequestParam("id") Integer id,
-                                      @RequestParam("c_name") String catname) {
-        productService.update(id, product.getName(), product.getDescription(), product.getPrice(), catname);
+                                      @RequestParam("c_id") Integer c_id) {
+        Category category = new Category();
+        category.setId(c_id);
+        product.setId(id);
+        product.setCategory(category);
+        productService.update(product);
         return new ModelAndView("success");
     }
 
     @RequestMapping(value = "/admin/product/del", method = RequestMethod.GET)
     public ModelAndView delProduct(@RequestParam("p_id") Integer id) {
-        productService.delete(id);
+        Product product = new Product();
+        product.setId(id);
+        productService.delete(product);
         return new ModelAndView("success");
     }
 
     @RequestMapping(value = "/product/addtocart", method = RequestMethod.GET)
-    public ModelAndView addToCart(@RequestParam("p_id") Integer p_id,
-                                  @CookieValue(value = "token", defaultValue = "token") String token){
+    public ModelAndView addToCart(@RequestParam("p_id") Integer p_id, @RequestParam("c_id") Integer c_id, HttpServletRequest request){
         ModelAndView mv;
-        User userInput = userService.findByToken(token);
-        if (userInput != null) {
-            orderService.addOrder(userInput.getId(), p_id);
+        User user = userService.getByUserName(request.getRemoteUser());
+        Product product = productService.getProduct(c_id, p_id);
+        if (user != null) {
+            orderService.addOrder(user, product);
             mv = new ModelAndView("success");
         } else mv = new ModelAndView("login", "user", new User());
         return mv;

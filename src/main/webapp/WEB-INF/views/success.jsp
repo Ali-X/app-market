@@ -34,7 +34,7 @@
 <body>
 
 <div class="container">
-
+    <h3 class="masthead-brand"><a href="<c:url value="/home"/>">Ali-X Spring project</a></h3>
     <h1>Changing is successful!</h1>
 
 </div> <!-- /container -->

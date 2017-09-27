@@ -35,7 +35,7 @@
 </head>
 
 <body>
-
+<h3 class="masthead-brand"><a href="<c:url value="/home"/>">Ali-X Spring project</a></h3>
 <div class="container">
 
     <h1>Product</h1>
@@ -48,9 +48,9 @@
         <spring:input path="description" title="Product description" type="text" name="p_descr"/>
         <br><br>
         Category Name:<br>
-        <select name="c_name">
+        <select name="c_id">
             <c:forEach var="cat" items="${categories}">
-                <option value="${cat.name}">${cat.name}</option>
+                <option value="${cat.id}">${cat.name}</option>
             </c:forEach>
         </select>
         <br><br>

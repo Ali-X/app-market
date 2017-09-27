@@ -29,7 +29,7 @@
                     <h3 class="masthead-brand"><a href="<c:url value="/home"/>">Ali-X Spring project</a></h3>
                     <nav>
                         <ul class="nav masthead-nav">
-                            <li class="active"><a href="<c:url value="/profile"/>">Profile</a></li>
+                            <li class="active"><a href="<c:url value="/personalPage"/>">Profile</a></li>
                             <li class="active"><a href="<c:url value="/login"/>">Login</a></li>
                             <li class="active"><a href="<c:url value="/registration"/>">Registration</a></li>
                         </ul>

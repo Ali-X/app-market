@@ -7,11 +7,11 @@ import java.util.List;
 
 public interface CategoryDAO {
 
-    void update(Integer id, String new_name);
+    void update(Category category);
 
-    void create(String category);
+    void create(Category category);
 
-    void delete(Integer id);
+    void delete(Category category);
 
     List<Category> getAll();
 

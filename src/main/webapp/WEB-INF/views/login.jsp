@@ -1,5 +1,5 @@
 <%@ taglib prefix="spring" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="c" uri="http://www.springframework.org/tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="en">
@@ -34,17 +34,29 @@
 <body>
 
 <div class="container">
-
-    <spring:form modelAttribute="user" method="post" action="/login" class="form-signin">
+    <h3 class="masthead-brand"><a href="<c:url value="/home"/>">Ali-X Spring project</a></h3>
+    <spring:form modelAttribute="user" action="/j_spring_security_check" class="form-signin">
 
         <h2 class="form-signin-heading">Please sign in</h2>
 
         <spring:input path="username" class="form-control" placeholder="Username"/>
         <spring:input path="password" type="password" class="form-control" placeholder="Password"/>
+        <input type="hidden" name="${_csrf.parameterName}" value="${_csrf.token}">
 
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
 
     </spring:form>
+
+    <c:if test="${not empty error}">
+        <div class="alert alert-danger" role="alert">
+            <p>${error}</p>
+        </div>
+    </c:if>
+    <c:if test="${not empty logout}">
+        <div class="alert alert-info" role="alert">
+            <p>${logout}</p>
+        </div>
+    </c:if>
 
 </div> <!-- /container -->
 

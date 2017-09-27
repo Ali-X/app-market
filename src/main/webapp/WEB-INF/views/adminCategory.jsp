@@ -35,6 +35,7 @@
 </head>
 
 <body>
+<h3 class="masthead-brand"><a href="<c:url value="/home"/>">Ali-X Spring project</a></h3>
 <div class="container">
 <h1>Category Settings</h1>
 <br>
@@ -50,7 +51,7 @@
                 <tr>
                     <spring:form method="post"  modelAttribute="category" action="/admin/category/add">
                         <td>
-                            <input readonly path="id" class="inputTable" title="Category Name" type="text" name="c_id" value="null"/>
+                            <input readonly path="id" class="inputTable" title="Category id" type="text" name="c_id" value="null"/>
                         </td>
                         <td>
                             <spring:input path="name" class="inputTable" title="Category Name" type="text" name="c_name"/>

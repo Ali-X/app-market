@@ -11,6 +11,7 @@ import ua.ali_x.spring.model.Product;
 import ua.ali_x.spring.model.User;
 import ua.ali_x.spring.service.CategoryService;
 import ua.ali_x.spring.service.ProductService;
+import ua.ali_x.spring.service.RoleService;
 import ua.ali_x.spring.service.UserService;
 
 import java.util.List;
@@ -24,6 +25,8 @@ public class AdminController {
     CategoryService categoryService;
     @Autowired
     ProductService productService;
+    @Autowired
+    RoleService roleService;
 
     @RequestMapping(value = "/admin/category", method = RequestMethod.GET)
     public ModelAndView category(@RequestParam(value = "page", defaultValue = "-1") Integer pageAttr){
@@ -78,8 +81,7 @@ public class AdminController {
     public ModelAndView user(){
         ModelAndView mv = new ModelAndView("adminUser", "user", new User());
         mv.addObject("users", userService.getAll());
-        mv.addObject("allRoles", userService.getAllRoles());
-        mv.addObject("userWithRoles", userService.getRoles());
+        mv.addObject("roles", roleService.getAll());
         return mv;
     }
 

@@ -32,17 +32,17 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public void create(String name, String description, Integer c_id, BigDecimal price) {
-        productDAO.create(name, description, c_id, price);
+    public void create(Product product) {
+        productDAO.create(product);
     }
 
     @Override
-    public void delete(Integer id) {
-        productDAO.delete(id);
+    public void delete(Product product) {
+        productDAO.delete(product);
     }
 
     @Override
-    public void update(Integer id, String new_name, String new_descr, BigDecimal price, String c_name) {
-        productDAO.update(id, new_name, new_descr, price, c_name);
+    public void update(Product product) {
+        productDAO.update(product);
     }
 }

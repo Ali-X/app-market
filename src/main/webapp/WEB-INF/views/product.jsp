@@ -52,6 +52,7 @@
                 <h2>Price:</h2>
                 <h4><fmt:formatNumber type="currency" currencySymbol="$" value="${pr.price}"/></h4>
                 <a href="<c:url value="/product/addtocart">
+                            <c:param name="c_id" value="${param.c_id}" />
                             <c:param name="p_id" value="${pr.id}" />
                           </c:url>">Add To Cart</a>
             </div>

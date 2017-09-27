@@ -36,7 +36,7 @@
 </head>
 
 <body>
-
+<h3 class="masthead-brand"><a href="<c:url value="/home"/>">Ali-X Spring project</a></h3>
 <div class="container">
 
     <h1>Hello, ${user.username}</h1>
@@ -58,9 +58,6 @@
                                 <td>
                                     <c:out value="${o.date}"/>
                                 </td>
-                                <td>
-                                    <fmt:formatNumber type="currency" currencySymbol="$" value="${o.price}"/>
-                                </td>
                             </tr>
                         </table>
                     </tr>
@@ -68,23 +65,22 @@
                         <table>
                             <tr>
                                 <th>Name</th>
-                                <th>Number</th>
-                                <th>Total price</th>
+                                <th>Price</th>
                             </tr>
                             <c:forEach var="p" items="${o.products}">
                                 <tr>
                                     <td>
-                                        <c:out value="${p.key.name}"/>
+                                        <c:out value="${p.name}"/>
                                     </td>
                                     <td>
-                                        <c:out value="${p.value}"/>
-                                    </td>
-                                    <td>
-                                        <fmt:formatNumber type="currency" currencySymbol="$" value="${p.key.price}"/>
+                                        <c:out value="${p.price}"/>
                                     </td>
                                 </tr>
                             </c:forEach>
                         </table>
+                    </tr>
+                    <tr>
+                        <h1> </h1>
                     </tr>
                 </c:forEach>
             </table>

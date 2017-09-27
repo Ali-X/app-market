@@ -22,16 +22,16 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public void create(String name) {
-        categoryDAO.create(name);
+    public void create(Category category) {
+        categoryDAO.create(category);
     }
 
-    public void delete(Integer id) {
-        categoryDAO.delete(id);
+    public void delete(Category category) {
+        categoryDAO.delete(category);
     }
 
     @Override
-    public void update(Integer id, String new_name) {
-        categoryDAO.update(id, new_name);
+    public void update(Category category) {
+        categoryDAO.update(category);
     }
 }

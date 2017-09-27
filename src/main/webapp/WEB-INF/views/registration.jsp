@@ -32,19 +32,16 @@
 </head>
 
 <body>
-
 <div class="container">
-
-    <spring:form modelAttribute="user" method="post" action="/registration" class="form-signin" enctype="multipart/form-data">
+    <h3 class="masthead-brand"><a href="<c:url value="/home"/>">Ali-X Spring project</a></h3>
+    <spring:form modelAttribute="user" method="post" action="/registration?${_csrf.parameterName}=${_csrf.token}" class="form-signin" enctype="multipart/form-data">
 
         <h2 class="form-signin-heading">Please sign up</h2>
-
 
         <spring:input path="username" class="form-control" placeholder="Username"/>
         <spring:input path="password" type="password" class="form-control" placeholder="Password"/>
         <spring:input path="email" type="email" class="form-control" placeholder="Email"/>
         <input name="file" type="file" class="form-control" placeholder="File"/>
-
         <button class="btn btn-lg btn-primary btn-block" type="submit">Sign up</button>
 
     </spring:form>

@@ -3,41 +3,31 @@ package ua.ali_x.spring.dao;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import ua.ali_x.spring.model.Category;
 import java.sql.ResultSet;
 import java.util.List;
 
 @Repository
-public class CategoryDAOImpl implements CategoryDAO {
+@Transactional
+public class CategoryDAOImpl extends AbstractDAO implements CategoryDAO {
 
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
-
-    public void create(String category) {
-        String sql = "INSERT INTO CATEGORY (NAME) VALUES(?)";
-        jdbcTemplate.update(sql, new Object[]{category});
+    public void create(Category category) {
+        this.sessionFactory.getCurrentSession().save(category);
     }
 
-    public void delete(Integer id) {
-        String sql = "DELETE FROM CATEGORY WHERE ID = ?";
-        jdbcTemplate.update(sql, new Object[]{id});
+    public void delete(Category category) {
+        this.sessionFactory.getCurrentSession().delete(category);
     }
 
-    public void update(Integer id, String new_name) {
-        String sql = "UPDATE CATEGORY SET NAME = ? WHERE ID = ?";
-        jdbcTemplate.update(sql, new Object[]{new_name, id});
+    public void update(Category category) {
+        this.sessionFactory.getCurrentSession().update(category);
     }
 
     public List<Category> getAll() {
-        String sql = "SELECT * FROM CATEGORY";
-        List<Category> list = jdbcTemplate.query(
-                sql,
-                (ResultSet rs, int rowNum) -> {
-                        Category c = new Category();
-                        c.setId(rs.getInt(1));
-                        c.setName(rs.getString(2));
-                        return c;
-                });
+        String query = "FROM Category ";
+        List<Category> list = this.sessionFactory.getCurrentSession()
+                .createQuery(query).list();
         return list;
     }
 }

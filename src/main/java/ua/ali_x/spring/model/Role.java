@@ -1,25 +1,26 @@
 package ua.ali_x.spring.model;
 
 import javax.persistence.*;
-import java.util.List;
+import java.util.Set;
 
 @Entity
-@Table(name = "CATEGORY")
-public class Category {
+@Table(name = "Roles")
+public class Role {
+
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Integer id;
     @Column(name = "name")
     private String name;
-    @OneToMany(mappedBy = "category")
-    private List<Product> products;
+    @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
+    private Set<User> users;
 
-    public List<Product> getProducts() {
-        return products;
+    public Set<User> getUsers() {
+        return users;
     }
 
-    public void setProducts(List<Product> products) {
-        this.products = products;
+    public void setUsers(Set<User> users) {
+        this.users = users;
     }
 
     public Integer getId() {
@@ -43,10 +44,10 @@ public class Category {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
 
-        Category category = (Category) o;
+        Role role = (Role) o;
 
-        if (!id.equals(category.id)) return false;
-        return name.equals(category.name);
+        if (!id.equals(role.id)) return false;
+        return name.equals(role.name);
     }
 
     @Override

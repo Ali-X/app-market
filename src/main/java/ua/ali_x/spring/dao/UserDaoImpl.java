@@ -5,11 +5,12 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
-import ua.ali_x.spring.controller.RegistrationController;
-import ua.ali_x.spring.model.Roles;
+import ua.ali_x.spring.controller.UserController;
+import ua.ali_x.spring.model.Role;
 import ua.ali_x.spring.model.User;
 
 import java.io.BufferedOutputStream;
@@ -24,177 +25,50 @@ import java.util.List;
 import java.util.Set;
 
 @Repository
-public class UserDaoImpl implements UserDao {
-
-    @Autowired
-    private JdbcTemplate jdbcTemplate;
+@Transactional
+public class UserDaoImpl extends AbstractDAO implements UserDao {
 
     public void create(User user) {
-        Integer userid = null;
-        Integer roleid = null;
-        String sql = "INSERT INTO USERS (USERNAME, TOKEN, PASSWORD, EMAIL) VALUES(?,?,?,?)";
-        jdbcTemplate.update(sql, new Object[]{user.getUsername(), user.getToken(),
-                                              user.getPassword(), user.getEmail()});
-
-        sql = "SELECT U.ID FROM USERS U WHERE U.USERNAME = ?";
-        userid = jdbcTemplate.queryForObject(sql, new Object[]{user.getUsername()}, (rs, rm) -> {
-            Integer temp;
-            temp = rs.getInt("ID");
-            return temp;
-        });
-        for (Roles r : user.getRoles()) {
-            sql = "SELECT R.ID FROM ROLES R WHERE R.NAME = ?";
-            roleid = jdbcTemplate.queryForObject(sql, new Object[]{r.name()}, (rs, rm) -> {
-                Integer temp;
-                temp = rs.getInt("ID");
-                return temp;
-            });
-            sql = "INSERT INTO USERTOROLE (USERID, ROLEID) VALUES (?, ?)";
-            jdbcTemplate.update(sql, new Object[]{userid, roleid});
-        }
+        this.sessionFactory.getCurrentSession().save(user);
     }
 
     public void update(User user) {
-        String sql = "UPDATE USERS " +
-                "SET USERNAME = ?, PASSWORD = ?, EMAIL = ? " +
-                "WHERE ID = ?;";
-        jdbcTemplate.update(sql, new Object[]{user.getUsername(), user.getPassword(),
-                                              user.getEmail(), user.getId()});
+        this.sessionFactory.getCurrentSession().update(user);
     }
 
-    public void delete(Integer id) {
-        String sql = "DELETE FROM USERS WHERE ID = ?";
-        jdbcTemplate.update(sql, new Object[]{id});
+    public void delete(User user) {
+        this.sessionFactory.getCurrentSession().delete(user);
     }
 
     @Override
     public List<User> getAll() {
-        List<User> users = new ArrayList<>();
-        String sql = "SELECT  U.ID, U.USERNAME, U.PASSWORD, U.EMAIL " +
-                "FROM USERS U;";
-        users = jdbcTemplate.query(sql, (rs, rm) -> {
-            User result = new User();
-            result.setId(rs.getInt("ID"));
-            result.setUsername(rs.getString("USERNAME"));
-            result.setEmail(rs.getString("EMAIL"));
-            result.setPassword(rs.getString("PASSWORD"));
-            return result;
-        });
-        return users;
-    }
-
-    public List<User> getRoles() {
-        List<User> users;
-        String sql = "SELECT  U.ID, U.USERNAME, U.PASSWORD, U.EMAIL, R.NAME " +
-                "FROM USERS U " +
-                "JOIN USERTOROLE UR ON UR.USERID=U.ID " +
-                "JOIN ROLES R ON R.ID = UR.ROLEID;";
-        users = jdbcTemplate.query(sql, (rs, rm) -> {
-            User result = new User();
-            result.setId(rs.getInt("ID"));
-            result.setUsername(rs.getString("USERNAME"));
-            result.setEmail(rs.getString("EMAIL"));
-            result.setPassword(rs.getString("PASSWORD"));
-            Set<Roles> roles = new HashSet<>();
-            roles.add(Roles.valueOf(rs.getString("NAME")));
-            result.setRoles(roles);
-            return result;
-        });
-        return users;
-    }
-
-    @Override
-    public void setRole(Integer userID, String role) {
-        String sql = "SELECT R.ID FROM ROLES R WHERE R.NAME = ?;";
-        Integer roleID = jdbcTemplate.queryForObject(sql, new Object[]{role}, (rs, rm) -> {
-            Integer temp;
-            temp = rs.getInt("ID");
-            return temp;
-        });
-        sql = "INSERT INTO USERTOROLE (USERID, ROLEID) VALUES (?, ?)";
-        jdbcTemplate.update(sql, new Object[]{userID, roleID});
-    }
-
-    @Override
-    public void delRole(Integer id, String role) {
-        String sql = "SELECT R.ID FROM ROLES R WHERE R.NAME = ?;";
-        Integer roleID = jdbcTemplate.queryForObject(sql, new Object[]{role}, (rs, rm) -> {
-            Integer temp;
-            temp = rs.getInt("ID");
-            return temp;
-        });
-        sql = "DELETE FROM USERTOROLE WHERE USERID = ? AND ROLEID = ?;";
-        jdbcTemplate.update(sql, new Object[]{id, roleID});
+        String query = "FROM User ";
+        List<User> list = this.sessionFactory.getCurrentSession()
+                .createQuery(query).list();
+        return list;
     }
 
     public User findByToken(String token) {
-        Set<Roles> roles = new HashSet<Roles>();
-        String sql = "SELECT  U.ID, U.USERNAME, U.PASSWORD, U.TOKEN, U.EMAIL, R.NAME " +
-                "FROM USERS U " +
-                "JOIN USERTOROLE UR ON UR.USERID=U.ID " +
-                "JOIN ROLES R ON R.ID = UR.ROLEID " +
-                "WHERE U.TOKEN = ?;";
-        List<User> list = jdbcTemplate.query(sql, new Object[]{token}, (rs, rm) -> {
-            User result = new User();
-            result.setId(rs.getInt("ID"));
-            result.setUsername(rs.getString("USERNAME"));
-            result.setEmail(rs.getString("EMAIL"));
-            result.setToken(rs.getString("TOKEN"));
-            result.setPassword(rs.getString("PASSWORD"));
-            roles.add(Roles.valueOf(rs.getString("NAME")));
-            result.setRoles(roles);
-            return result;
-        });
-        if (list.size() == 0) return null;
-        return list.get(list.size() - 1);
+        String query = "FROM User U " +
+                "JOIN U.roles as Role " +
+                "WHERE U.token =:token ";
+        return (User) this.sessionFactory.getCurrentSession()
+                .createQuery(query)
+                .setParameter("token", token)
+                .uniqueResult();
     }
-
-    public User findByNamePassword(String name, String password) {
-        Set<Roles> roles = new HashSet<Roles>();
-        String sql = "SELECT  U.ID, U.USERNAME, U.PASSWORD, U.TOKEN, U.EMAIL, R.NAME " +
-                "FROM USERS U " +
-                "JOIN USERTOROLE UR ON UR.USERID=U.ID " +
-                "JOIN ROLES R ON R.ID = UR.ROLEID " +
-                "WHERE U.USERNAME = ? " +
-                "AND U.PASSWORD = ?";
-        List<User> list = jdbcTemplate.query(
-                sql,
-                new Object[]{name, password},
-                (ResultSet rs, int rowNum) ->
-                {
-                    User result = new User();
-                    result.setId(rs.getInt("ID"));
-                    result.setUsername(rs.getString("USERNAME"));
-                    result.setEmail(rs.getString("EMAIL"));
-                    result.setToken(rs.getString("TOKEN"));
-                    result.setPassword(rs.getString("PASSWORD"));
-                    roles.add(Roles.valueOf(rs.getString("NAME")));
-                    result.setRoles(roles);
-                    return result;
-                }
-        );
-        if (list.size() == 0) return null;
-        return list.get(list.size() - 1);
-    }
-
 
     public User getByUserName(String username) {
-        String sql = "SELECT ID, USERNAME, EMAIL, TOKEN, PASSWORD FROM USERS WHERE USERNAME = ?;";
-        User user = jdbcTemplate.queryForObject(sql, new Object[]{username}, (rs, rm) -> {
-            User result = new User();
-            result.setId(rs.getInt("ID"));
-            result.setUsername(rs.getString("USERNAME"));
-            result.setEmail(rs.getString("EMAIL"));
-            result.setToken(rs.getString("TOKEN"));
-            result.setPassword(rs.getString("PASSWORD"));
-            return result;
-        });
-        return user;
+        String query = "from User where username =:name";
+        return (User) this.sessionFactory.getCurrentSession()
+                .createQuery(query)
+                .setParameter("name", username)
+                .uniqueResult();
     }
 
     public void saveImage(@ModelAttribute("user") User user, @RequestParam("file") MultipartFile file) {
         final Logger logger = LoggerFactory
-                .getLogger(RegistrationController.class);
+                .getLogger(UserController.class);
 
         if (!file.isEmpty()) {
             try {

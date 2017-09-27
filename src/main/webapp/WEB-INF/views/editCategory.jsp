@@ -35,7 +35,7 @@
 </head>
 
 <body>
-
+<h3 class="masthead-brand"><a href="<c:url value="/home"/>">Ali-X Spring project</a></h3>
 <div class="container">
 
     <h1>Category</h1>
@@ -44,7 +44,7 @@
         New Category Name:<br>
         <spring:input path="name" title="New Category Name" type="text" name="new_c_name"/>
         <br><br>
-        <input type="hidden" name="id" value="${id}">
+        <input type="hidden" name="c_id" value="${c_id}">
         <input type="submit" value="Submit">
     </spring:form>
 

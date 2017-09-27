@@ -35,7 +35,7 @@
 </head>
 
 <body>
-
+<h3 class="masthead-brand"><a href="<c:url value="/home"/>">Ali-X Spring project</a></h3>
 <div class="container">
 
     <h1>Product</h1>
@@ -51,8 +51,8 @@
         <h4>Image:</h4>
         <input type="file" name="file" title="select image..."/>
         <br>
-        <input type="hidden" name="id" value="${id}">
-        <input type="submit" value="Submit">
+        <input type="hidden" name="id" value="${id}"/>
+        <input type="submit" value="Submit"/>
         <br>
     </spring:form>
     <a href="<c:url value="/home"/> ">Home</a>
