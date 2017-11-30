@@ -4,7 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 import ua.ali_x.spring.model.Order;
 import ua.ali_x.spring.model.User;
 import ua.ali_x.spring.service.ImageService;
@@ -44,7 +43,7 @@ public class UserPageController {
 
     @RequestMapping(value = "/update", method = RequestMethod.PUT)
     public User updateUser(@ModelAttribute("user") User user,
-                            @RequestParam("file") MultipartFile file) {
+                           @RequestParam("file") MultipartFile file) {
         imageService.saveImage(user.getUsername(), file);
         userService.update(user);
         return user;

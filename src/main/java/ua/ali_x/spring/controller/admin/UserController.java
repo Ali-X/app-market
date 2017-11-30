@@ -35,13 +35,13 @@ public class UserController {
         return roleService.getAll();
     }
 
-    @RequestMapping(value = "/update", method = RequestMethod.PUT)
+/*    @RequestMapping(value = "/update", method = RequestMethod.PUT)
     public User updateUser(@RequestBody User user,
                             @RequestParam("file") MultipartFile file) {
         imageService.saveImage(user.getUsername(), file);
         userService.update(user);
         return user;
-    }
+    }*/
 
     @RequestMapping(value = "/delete", method = RequestMethod.DELETE)
     public void deleteUser(@RequestBody User user) {
@@ -56,7 +56,7 @@ public class UserController {
         return user;
     }
 
-    @RequestMapping(value = "/role/delete", method = RequestMethod.DELETE)
+    @RequestMapping(value = "/role/remove", method = RequestMethod.DELETE)
     public User delRole(@RequestBody User user, @RequestBody Role role) {
         user.removeRole(role);
         userService.update(user);

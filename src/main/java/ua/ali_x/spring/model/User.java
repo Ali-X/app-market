@@ -1,5 +1,7 @@
 package ua.ali_x.spring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,6 +32,7 @@ public class User {
     )
     private Set<Role> roles = new HashSet<Role>();
     @OneToMany(mappedBy="user")
+    @JsonIgnore
     private Set<Order> orders = new HashSet<>();
 
     public Set<Order> getOrders() {
