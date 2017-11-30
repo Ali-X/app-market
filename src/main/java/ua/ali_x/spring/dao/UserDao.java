@@ -9,8 +9,6 @@ import java.util.List;
 
 public interface UserDao {
 
-    User findByToken(String token);
-
     List<User> getAll();
 
     void create(User user);
@@ -18,8 +16,6 @@ public interface UserDao {
     void update(User user);
 
     void delete(User user);
-
-    void saveImage(@ModelAttribute("user") User user, @RequestParam("file") MultipartFile file);
 
     User getByUserName(String username);
 

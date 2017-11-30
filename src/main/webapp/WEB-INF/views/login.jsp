@@ -35,6 +35,7 @@
 
 <div class="container">
     <h3 class="masthead-brand"><a href="<c:url value="/home"/>">Ali-X Spring project</a></h3>
+
     <spring:form modelAttribute="user" action="/j_spring_security_check" class="form-signin">
 
         <h2 class="form-signin-heading">Please sign in</h2>

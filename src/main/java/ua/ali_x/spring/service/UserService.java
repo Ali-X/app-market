@@ -13,15 +13,11 @@ public interface UserService {
 
     List<User> getAll();
 
-    User findByToken(String token);
-
     void create(User user);
 
     void delete(User user);
 
     void update(User user);
-
-    void saveImage(@ModelAttribute("user") User user, @RequestParam("file") MultipartFile file);
 
     User getByUserName(String username);
 

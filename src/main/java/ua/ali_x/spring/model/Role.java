@@ -1,5 +1,7 @@
 package ua.ali_x.spring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.util.Set;
 
@@ -13,6 +15,7 @@ public class Role {
     @Column(name = "name")
     private String name;
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "roles")
+    @JsonIgnore
     private Set<User> users;
 
     public Set<User> getUsers() {

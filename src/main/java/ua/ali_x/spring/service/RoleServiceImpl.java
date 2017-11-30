@@ -19,17 +19,8 @@ public class RoleServiceImpl implements RoleService {
     }
 
     @Override
-    public void delRole(Role role) {
-        roleDAO.delRole(role);
-    }
-
-    @Override
     public List<Role> getAll() {
         return roleDAO.getAll();
     }
 
-    @Override
-    public void setRole(Integer id, String role) {
-        roleDAO.setRole(id, role);
-    }
 }

@@ -1,5 +1,7 @@
 package ua.ali_x.spring.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 import javax.persistence.*;
 import java.math.BigDecimal;
 import java.util.ArrayList;
@@ -23,7 +25,10 @@ public class Product {
     @Column(name = "price")
     private BigDecimal price;
     @ManyToMany(fetch = FetchType.LAZY, mappedBy = "products")
+    @JsonIgnore
     private List<Order> orders = new ArrayList<>();
+    @Column(name = "rating")
+    private Integer rating;
 
     public List<Order> getOrders() {
         return orders;
@@ -86,5 +91,17 @@ public class Product {
     @Override
     public int hashCode() {
         return id.hashCode();
+    }
+
+    public Integer getRating() {
+        return rating;
+    }
+
+    public void setRating(Integer rating) {
+        this.rating = rating;
+    }
+
+    public void incrementRating(){
+        rating++;
     }
 }

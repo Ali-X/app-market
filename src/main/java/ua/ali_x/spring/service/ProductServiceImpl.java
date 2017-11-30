@@ -27,8 +27,8 @@ public class ProductServiceImpl implements ProductService {
         return productDAO.getAll();
     }
 
-    public Product getProduct(Integer c_id, Integer p_id) {
-        return productDAO.getProduct(c_id, p_id);
+    public Product getProduct(Integer p_id) {
+        return productDAO.getProduct(p_id);
     }
 
     @Override
@@ -44,5 +44,15 @@ public class ProductServiceImpl implements ProductService {
     @Override
     public void update(Product product) {
         productDAO.update(product);
+    }
+
+    @Override
+    public List<Product> getTopProducts() {
+        return productDAO.getTopProducts();
+    }
+
+    @Override
+    public List<Product> getByName(String name) {
+        return productDAO.getByName(name);
     }
 }

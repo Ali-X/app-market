@@ -23,6 +23,23 @@ public class ProductDAOImpl extends AbstractDAO implements ProductDAO {
         this.sessionFactory.getCurrentSession().update(product);
     }
 
+    @Override
+    public List<Product> getTopProducts() {
+        String query = "FROM Product as product ORDER BY product.rating desc ";
+        List<Product> list = this.sessionFactory.getCurrentSession()
+                .createQuery(query).list();
+        return list;
+    }
+
+    @Override
+    public List<Product> getByName(String name) {
+        String query = "FROM Product as product where lower(product.name) like lower(:name)";
+        List<Product> list = this.sessionFactory.getCurrentSession()
+                .createQuery(query)
+                .setParameter("name", "%"+name+"%").list();
+        return list;
+    }
+
 
     public List<Product> getAll(Integer c_id) {
         String query = "FROM Product as product where product.category.id =:c_id";
@@ -40,11 +57,10 @@ public class ProductDAOImpl extends AbstractDAO implements ProductDAO {
         return list;
     }
 
-    public Product getProduct(Integer c_id, Integer p_id) {
-        String query = "FROM Product as product where product.category.id =:c_id and product.id =:p_id";
+    public Product getProduct(Integer p_id) {
+        String query = "FROM Product as product where product.id =:p_id";
         return (Product) this.sessionFactory.getCurrentSession()
                 .createQuery(query)
-                .setParameter("c_id", c_id)
                 .setParameter("p_id", p_id)
                 .uniqueResult();
     }

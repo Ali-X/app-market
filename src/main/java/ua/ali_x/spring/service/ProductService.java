@@ -12,7 +12,7 @@ public interface ProductService {
 
     List<Product> getAll();
 
-    Product getProduct(Integer c_id, Integer p_id);
+    Product getProduct(Integer p_id);
 
     void create(Product product);
 
@@ -20,4 +20,7 @@ public interface ProductService {
 
     void update(Product product);
 
+    List<Product> getTopProducts();
+
+    List<Product> getByName(String name);
 }

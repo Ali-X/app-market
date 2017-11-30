@@ -16,20 +16,10 @@ public class RoleDAOImpl extends AbstractDAO implements RoleDAO {
     }
 
     @Override
-    public void delRole(Role role) {
-        this.sessionFactory.getCurrentSession().delete(role);
-    }
-
-    @Override
     public List<Role> getAll() {
         String query = "FROM Role ";
         List<Role> list = this.sessionFactory.getCurrentSession()
                 .createQuery(query).list();
         return list;
-    }
-
-    @Override
-    public void setRole(Integer id, String role) {
-
     }
 }
