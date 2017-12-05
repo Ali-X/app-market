@@ -1,15 +1,13 @@
 package ua.ali_x.spring.controller.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import ua.ali_x.spring.model.Category;
 import ua.ali_x.spring.service.CategoryService;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
 @RequestMapping(value = "/admin/category")
 public class CategoryController {

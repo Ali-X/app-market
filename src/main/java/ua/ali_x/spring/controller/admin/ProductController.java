@@ -9,6 +9,7 @@ import ua.ali_x.spring.service.*;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
 @RequestMapping(value = "/admin/product")
 public class ProductController {

@@ -1,10 +1,7 @@
 package ua.ali_x.spring.controller.admin;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.servlet.ModelAndView;
 import ua.ali_x.spring.model.Role;
 import ua.ali_x.spring.model.User;
 import ua.ali_x.spring.service.ImageService;
@@ -13,6 +10,7 @@ import ua.ali_x.spring.service.UserService;
 
 import java.util.List;
 
+@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
 @RestController
 @RequestMapping(value = "/admin/user")
 public class UserController {
@@ -26,12 +24,12 @@ public class UserController {
 
 
     @RequestMapping(value = "/users", method = RequestMethod.GET)
-    public List<User> getUsers(){
+    public List<User> getUsers() {
         return userService.getAll();
     }
 
     @RequestMapping(value = "/roles", method = RequestMethod.GET)
-    public List<Role> getRoles(){
+    public List<Role> getRoles() {
         return roleService.getAll();
     }
 
