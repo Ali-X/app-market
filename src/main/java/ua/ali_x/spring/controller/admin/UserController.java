@@ -9,8 +9,7 @@ import ua.ali_x.spring.service.RoleService;
 import ua.ali_x.spring.service.UserService;
 
 import java.util.List;
-
-@CrossOrigin(origins = "http://localhost:8081", maxAge = 3600)
+@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
 @RequestMapping(value = "/admin/user")
 public class UserController {

@@ -18,7 +18,7 @@ public class ImageServiceImpl implements ImageService {
         try {
             Path currentRelativePath = Paths.get("images");
             String uploadPath = currentRelativePath.toAbsolutePath().toString();
-            String fileName = name + ".png";
+            String fileName = name + ".JPG";
             String filePath = uploadPath + File.separator + fileName;
             FileInputStream fin = null;
             fin = new FileInputStream(filePath);
